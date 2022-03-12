@@ -4668,85 +4668,35 @@
 					<xsl:variable name ="cAuthorLastName">
 						<xsl:value-of select ="count(b:Last)"/>
 					</xsl:variable>
-					<xsl:variable name ="cAuthorMiddleName">
-						<xsl:value-of select ="count(b:Middle)"/>
-					</xsl:variable>
-					
+
                     <xsl:choose>
 						<xsl:when test="$cAuthorLastName=1">
 							<xsl:value-of select="b:Last"/>
                             <xsl:call-template name ="templ_prop_ListSeparator"/>
-							<!-- <xsl:if test="((position()+1)!=$cAuthors) and (position()&lt;$cAuthors)">
-								<xsl:call-template name ="templ_prop_ListSeparator"/>
-							</xsl:if> -->
 						</xsl:when>
 					</xsl:choose>
 
 					<xsl:choose>
 						<xsl:when test="$cAuthorFirstName=1">
-							<xsl:choose>
-								<xsl:when test="contains(b:First,$prop_APA_FromToDash)">
-									<xsl:call-template name="HandleSPaceHypenInAuthor">
-										<xsl:with-param name="author">
-											<xsl:call-template name="right-trim">
-												<xsl:with-param name ="s" select="b:First"/>
-											</xsl:call-template>
-										</xsl:with-param>
+							<xsl:call-template name="splitAuthorSpace">
+								<xsl:with-param name ="first">
+									<xsl:call-template name="right-trim">
+										<xsl:with-param name ="s" select="b:First"/>
 									</xsl:call-template>
-									<xsl:choose>
-										<xsl:when test="((position()+1)!=$cAuthors) and (position()&lt;$cAuthors)">
-										<xsl:call-template name ="templ_prop_ListSeparator"/>
-										<xsl:call-template name ="templ_prop_Space"/>
-										</xsl:when>
-										<xsl:otherwise>
-											<xsl:call-template name ="templ_prop_Space"/>
-										</xsl:otherwise>
-									</xsl:choose>
+								</xsl:with-param>
+							</xsl:call-template>
+							<xsl:choose>
+								<xsl:when test="(position()&lt;$cAuthors)">
+									<xsl:call-template name ="templ_prop_ListSeparator"/>
+									<xsl:call-template name ="templ_prop_Space"/>
 								</xsl:when>
 								<xsl:otherwise>
-									<xsl:call-template name="splitAuthorSpace">
-										<xsl:with-param name ="first">
-											<xsl:call-template name="right-trim">
-												<xsl:with-param name ="s" select="b:First"/>
-											</xsl:call-template>
-										</xsl:with-param>
-									</xsl:call-template>
-									<xsl:choose>
-										<xsl:when test="(position()&lt;$cAuthors)">
-										<xsl:call-template name ="templ_prop_ListSeparator"/>
-										<xsl:call-template name ="templ_prop_Space"/>
-										</xsl:when>
-										<xsl:otherwise>
-											<xsl:call-template name ="templ_prop_Space"/>
-										</xsl:otherwise>
-									</xsl:choose>
+									<xsl:call-template name ="templ_prop_Space"/>
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:when>
 					</xsl:choose>
 				</xsl:for-each>
-				<xsl:choose>
-					<xsl:when test="$cAuthors=0">
-						<xsl:choose>
-							<xsl:when test="$cTitle!=0 or $cEdition!=0 or $cVolume!=0 or $cCity!=0 or $cStateProvince!=0 or $cPublisher!=0 or $cYear!=0 or $cPages!=0">
-								<xsl:call-template name ="templ_prop_ListSeparator"/>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:call-template name ="templ_prop_Dot"/>
-							</xsl:otherwise>
-						</xsl:choose>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:choose>
-							<xsl:when test="$cTitle!=0 or $cEdition!=0 or $cVolume!=0 or $cEditor!=0 or $cCity!=0 or $cStateProvince!=0 or $cPublisher!=0 or $cYear!=0 or $cPages!=0">
-								<xsl:call-template name ="templ_prop_ListSeparator"/>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:call-template name ="templ_prop_Dot"/>
-							</xsl:otherwise>
-						</xsl:choose>
-					</xsl:otherwise>
-				</xsl:choose>
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
@@ -6781,17 +6731,17 @@
 		<xsl:choose>
 			<xsl:when test ="$cCity!=0 ">
 				<xsl:value-of select="b:City"/>
-				<xsl:choose>
-					<!-- <xsl:when test="$cPublisher!=0 and $cStateProvince=0">
+				<!-- <xsl:choose>
+					<xsl:when test="$cPublisher!=0 and $cStateProvince=0">
 						<xsl:call-template name ="templ_prop_EnumSeparator"/>
-					</xsl:when> -->
-					<!-- <xsl:when test="$cStateProvince!=0 or $cPages!=0">
+					</xsl:when> 
+					<xsl:when test="$cStateProvince!=0 or $cPages!=0">
 						<xsl:call-template name ="templ_prop_ListSeparator"/>
-					</xsl:when> -->
-					<!-- <xsl:when test="$cStateProvince=0 and $cYear=0 and $cPages=0 " >
+					</xsl:when> 
+					<xsl:when test="$cStateProvince=0 and $cYear=0 and $cPages=0 " >
 						<xsl:call-template name ="templ_prop_Dot"/>
-					</xsl:when> -->
-				</xsl:choose>
+					</xsl:when> 
+				</xsl:choose> -->
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>

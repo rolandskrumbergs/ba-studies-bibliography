@@ -12,142 +12,142 @@
 	<xsl:template name="Start">
 		<xsl:choose>
 			<xsl:when test="b:Version">
-				<xsl:text>2020.2.02</xsl:text>
+				<xsl:text>2010.2.02</xsl:text>
 			</xsl:when>
 
 			<xsl:when test="b:XslVersion">
-				<xsl:text>2020</xsl:text>
+				<xsl:text>2006</xsl:text>
 			</xsl:when>
       <xsl:when test="b:StyleNameLocalized">
         <xsl:choose>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1033'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1025'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1037'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1041'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='2052'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1028'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1042'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1036'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1040'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='3082'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1043'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1031'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1046'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1049'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1035'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1032'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1081'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1054'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1057'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1086'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1066'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1053'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1069'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1027'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1030'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1110'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1044'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1061'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1062'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1063'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1045'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='2070'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1029'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1055'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1038'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1048'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1058'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1026'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1050'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1087'">
             <xsl:text>Электр және электроника инженерлері институты</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='2074'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='3098'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1051'">
-            <xsl:text>IEEE</xsl:text>
+            <xsl:text>IEEE Demo</xsl:text>
           </xsl:when>
           <xsl:when test="b:StyleNameLocalized/b:Lcid='1060'">
             <xsl:text>Način citiranja IEEE</xsl:text>
@@ -515,6 +515,7 @@
 		<xsl:call-template name="Start"/>
 	</xsl:template>
 
+
 	<xsl:template name="localLCID">
 		<xsl:param name="LCID"/>
 		<xsl:variable name="_LCID1">
@@ -640,6 +641,7 @@
 		</xsl:variable>
 		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:InNameUnCap"/>
 	</xsl:template>
+
 
 	<xsl:template name="templ_prop_APA_SecondaryOpen" >
 		<xsl:param name="LCID" />
@@ -881,6 +883,7 @@
 		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:NoDateShortUnCap"/>
 	</xsl:template>
 
+
 	<xsl:template name="templ_str_NumberShortCap" >
 		<xsl:param name="LCID" />
 		<xsl:variable name="_LCID">
@@ -890,6 +893,7 @@
 		</xsl:variable>
 		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:NumberShortCap"/>
 	</xsl:template>
+
 
 	<xsl:template name="templ_str_NumberShortUnCap" >
 		<xsl:param name="LCID" />
@@ -901,6 +905,7 @@
 		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:NumberShortUnCap"/>
 	</xsl:template>
 
+
 	<xsl:template name="templ_str_PatentNumberShortCap" >
 		<xsl:param name="LCID" />
 		<xsl:variable name="_LCID">
@@ -910,6 +915,7 @@
 		</xsl:variable>
 		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:PatentNumberShortCap"/>
 	</xsl:template>
+
 
 	<xsl:template name="templ_str_PagesCountinousShort" >
 		<xsl:param name="LCID" />
@@ -921,6 +927,7 @@
 		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:PagesCountinousShort"/>
 	</xsl:template>
 
+
 	<xsl:template name="templ_str_PageShort" >
 		<xsl:param name="LCID" />
 		<xsl:variable name="_LCID">
@@ -930,6 +937,7 @@
 		</xsl:variable>
 		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:PageShort"/>
 	</xsl:template>
+
 
 	<xsl:template name="templ_str_SineNomineShort" >
 		<xsl:param name="LCID" />
@@ -941,6 +949,7 @@
 		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:SineNomineShort"/>
 	</xsl:template>
 
+
 	<xsl:template name="templ_str_SineLocoShort" >
 		<xsl:param name="LCID" />
 		<xsl:variable name="_LCID">
@@ -950,6 +959,7 @@
 		</xsl:variable>
 		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:SineLocoShort"/>
 	</xsl:template>
+
 
 	<xsl:template name="templ_str_SineLocoSineNomineShort" >
 		<xsl:param name="LCID" />
@@ -961,6 +971,7 @@
 		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:SineLocoSineNomineShort"/>
 	</xsl:template>
 
+
 	<xsl:template name="templ_str_VolumeOfShortCap" >
 		<xsl:param name="LCID" />
 		<xsl:variable name="_LCID">
@@ -970,6 +981,7 @@
 		</xsl:variable>
 		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:VolumeOfShortCap"/>
 	</xsl:template>
+
 
 	<xsl:template name="templ_str_VolumesOfShortCap" >
 		<xsl:param name="LCID" />
@@ -981,6 +993,7 @@
 		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:VolumesOfShortCap"/>
 	</xsl:template>
 
+
 	<xsl:template name="templ_str_VolumeShortCap" >
 		<xsl:param name="LCID" />
 		<xsl:variable name="_LCID">
@@ -991,6 +1004,7 @@
 		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:VolumeShortCap"/>
 	</xsl:template>
 
+
 	<xsl:template name="templ_str_VolumeShortUnCap" >
 		<xsl:param name="LCID" />
 		<xsl:variable name="_LCID">
@@ -1000,6 +1014,7 @@
 		</xsl:variable>
 		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:VolumeShortUnCap"/>
 	</xsl:template>
+
 
 	<xsl:template name="templ_str_VolumesShortUnCap" >
 		<xsl:param name="LCID" />
@@ -2458,6 +2473,7 @@
 		</xsl:if>
 	</xsl:template>
 
+
 	<xsl:template name="BibDisplayTitleAP">
 		<xsl:variable name="cTitle">
 			<xsl:value-of select="count(b:Title)"/>
@@ -3075,6 +3091,7 @@
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
+
 
 	<xsl:template name ="Seperator">
 		<xsl:variable name="cTitle">
@@ -3706,6 +3723,7 @@
 		</xsl:if>
 	</xsl:template>
 
+
 	<xsl:template name="strinventorPatent">
 		<xsl:text>Inventor</xsl:text>
 		<xsl:call-template name ="templ_prop_Dot"/>
@@ -3717,7 +3735,6 @@
 		<xsl:call-template name ="templ_prop_Dot"/>
 		<xsl:call-template name ="templ_prop_Space"/>
 	</xsl:template>
-
 	<xsl:template name="strintervieweeInterview">
 		<xsl:text>Interviewee</xsl:text>
 		<xsl:call-template name ="templ_prop_ListSeparator"/>
@@ -3744,14 +3761,12 @@
 		<xsl:call-template name ="templ_prop_ListSeparator"/>
 		<xsl:call-template name ="templ_prop_Space"/>
 	</xsl:template>
-
 	<xsl:template name="strArtists">
 
 		<xsl:text >Artists</xsl:text>
 		<xsl:call-template name ="templ_prop_ListSeparator"/>
 		<xsl:call-template name ="templ_prop_Space"/>
 	</xsl:template>
-
 	<xsl:template name="strArt">
 		<xsl:call-template name ="templ_prop_SecondaryOpen"/>
 		<xsl:text >Art</xsl:text>
@@ -4511,6 +4526,8 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
+
+
 
 	<xsl:template name="BibDisplayAuthorBook">
 		<xsl:param name ="DisplayEditorIfAuthorUnavailale"/>
@@ -5959,6 +5976,7 @@
 		</xsl:choose>
 	</xsl:template>
 
+
 	<xsl:template name="BibDisplayYear">
 		<xsl:variable name="cYear">
 			<xsl:value-of select="count(b:Year)"/>
@@ -6040,6 +6058,8 @@
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
+
+
 
 	<xsl:template name="BibDisplayTitleBook">
 		<xsl:variable name="cTitle">
@@ -6127,6 +6147,7 @@
 			<xsl:call-template name ="templ_prop_Space"/>
 		</xsl:if>
 	</xsl:template>
+
 
 	<xsl:template name="BibDisplayYearSoundrecording">
 		<xsl:variable name="cYear">
@@ -6856,6 +6877,8 @@
 		</xsl:if>
 	</xsl:template>
 
+
+
 	<xsl:template name ="BibDisplayPages">
 		<xsl:variable name="cPages">
 			<xsl:value-of select="count(b:Pages)"/>
@@ -6939,6 +6962,7 @@
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
+
 
 	<xsl:template name="BibDisplayPublisher">
 		<xsl:variable name="cPublisher">
@@ -7044,6 +7068,7 @@
 		</xsl:choose>
 	</xsl:template>
 
+
 	<xsl:template name="BibDisplayAccessedDates">
 		<xsl:variable name="cYearAccessed">
 			<xsl:value-of select="count(b:YearAccessed)"/>
@@ -7130,6 +7155,7 @@
 			<xsl:call-template name ="templ_prop_Dot"/>
 		</xsl:if>
 	</xsl:template>
+
 
 	<xsl:template name="BibDisplayPatent">
 		<xsl:variable name="cPatent">
@@ -7392,6 +7418,7 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
+
 
 	<xsl:template match ="b:Source">
 		<xsl:variable name="LCID">
