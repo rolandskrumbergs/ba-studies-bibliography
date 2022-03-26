@@ -638,7 +638,14 @@
 				<xsl:with-param name="LCID" select="$LCID"/>
 			</xsl:call-template>
 		</xsl:variable>
-		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:InNameUnCap"/>
+		<xsl:choose>
+			<xsl:when test="$_LCID = 1062">
+				<xsl:text>no</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:InNameUnCap"/>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template name="templ_prop_APA_SecondaryOpen" >
@@ -778,7 +785,20 @@
 				<xsl:with-param name="LCID" select="$LCID"/>
 			</xsl:call-template>
 		</xsl:variable>
-		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:AndUnCap"/>
+		<xsl:choose>
+			<xsl:when test="$_LCID = 1062">
+				<xsl:text>un</xsl:text>
+			</xsl:when>
+			<xsl:when test="$_LCID = 1031">
+				<xsl:text>und</xsl:text>
+			</xsl:when>
+			<xsl:when test="$_LCID = 1049">
+				<xsl:text>и</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:AndUnCap"/>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template name="templ_str_AndOthersUnCap" >
@@ -1318,7 +1338,9 @@
 				<xsl:with-param name="LCID" select="$LCID"/>
 			</xsl:call-template>
 		</xsl:variable>
+		<xsl:text>(</xsl:text>
 		<xsl:value-of select="/*/b:Locals/b:Local[@LCID=$_LCID]/b:Strings/b:EditorShortCap"/>
+		<xsl:text>)</xsl:text>
 	</xsl:template>
 
 	<xsl:template name="templ_str_EditorShortUnCap" >
@@ -2075,17 +2097,41 @@
 
 	<xsl:template name ="DisplayPageOrPages">
 		<xsl:param name ="pages"/>
+		<xsl:variable name="LCID">
+			<xsl:choose>
+				<xsl:when test="b:LCID='0' or b:LCID='' or not(b:LCID)">
+					<xsl:value-of select="/*/b:Locals/b:DefaultLCID"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="b:LCID"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		<xsl:choose>
-			<xsl:when test="contains($pages, '-')">
-				<xsl:value-of select="concat('pp. ', $pages)"/>
+			<xsl:when test="$LCID = 1062">
+				<xsl:value-of select="concat($pages, '. ','lpp.')"/>
 			</xsl:when>
-			<xsl:when test="contains($pages, ',')">
-				<xsl:value-of select="concat('pp. ', $pages)"/>
+			<xsl:when test="$LCID = 1049">
+				<xsl:value-of select="concat('c.', $pages)"/>
+			</xsl:when>
+			<xsl:when test="$LCID = 1031">
+				<xsl:value-of select="concat('S.', $pages)"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:value-of select="concat('p. ', $pages)"/>
+				<xsl:choose>
+					<xsl:when test="contains($pages, '-')">
+						<xsl:value-of select="concat('pp. ', $pages)"/>
+					</xsl:when>
+					<xsl:when test="contains($pages, ',')">
+						<xsl:value-of select="concat('pp. ', $pages)"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="concat('p. ', $pages)"/>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:otherwise>
 		</xsl:choose>
+		
 	</xsl:template>
 
 	<xsl:template name="BibAddParagraphAttributes">
@@ -2616,7 +2662,19 @@
 			<xsl:value-of select ="count(b:Author/b:Author/b:Corporate)"/>
 		</xsl:variable>
 
+		<xsl:variable name="str_InNameCap">
+			<xsl:call-template name="templ_str_InUnCap"/>
+		</xsl:variable>
+		<xsl:variable name="prop_EnumSeaparator">
+			<xsl:call-template name ="templ_prop_Space"/>
+		</xsl:variable>
+
 		<xsl:if test ="$cAuthors>0 or $corpAuthor>0">
+			<xsl:call-template name ="FindReplaceString">
+				<xsl:with-param name="originalString" select="string($str_InNameCap)"/>
+				<xsl:with-param name="stringToBeReplaced" select="' %1'"/>
+				<xsl:with-param name="stringReplacement" select="$prop_EnumSeaparator"/>
+			</xsl:call-template>
 			<xsl:choose>
 				<xsl:when test="$cEditor = 1">
 					<xsl:variable name ="cEditorFirstName">
@@ -2629,6 +2687,12 @@
 						<xsl:value-of select ="count(b:Author/b:Editor/b:NameList/b:Person/b:Middle)"/>
 					</xsl:variable>
 					<xsl:choose>
+						<xsl:when test="$cEditorLastName=1">
+							<xsl:value-of select="b:Author/b:Editor/b:NameList/b:Person/b:Last"/>
+							<xsl:call-template name ="templ_prop_ListSeparator"/>
+						</xsl:when>
+					</xsl:choose>
+					<xsl:choose>
 						<xsl:when test="$cEditorFirstName=1">
 							<xsl:call-template name="splitAuthorSpace">
 								<xsl:with-param name ="first">
@@ -2638,24 +2702,6 @@
 								</xsl:with-param>
 							</xsl:call-template>
 							<xsl:call-template name ="templ_prop_Space"/>
-						</xsl:when>
-					</xsl:choose>
-					<xsl:choose>
-						<xsl:when test="$cEditorMiddleName=1">
-							<xsl:call-template name="splitAuthorSpace">
-								<xsl:with-param name ="first">
-									<xsl:call-template name="right-trim">
-										<xsl:with-param name ="s" select="b:Author/b:Editor/b:NameList/b:Person/b:Middle"/>
-									</xsl:call-template>
-								</xsl:with-param>
-							</xsl:call-template>
-							<xsl:call-template name ="templ_prop_Space"/>
-						</xsl:when>
-					</xsl:choose>
-					<xsl:choose>
-						<xsl:when test="$cEditorLastName=1">
-							<xsl:value-of select="b:Author/b:Editor/b:NameList/b:Person/b:Last"/>
-							<xsl:call-template name ="templ_prop_ListSeparator"/>
 						</xsl:when>
 					</xsl:choose>
 					<xsl:if test="$cEditor=1">
@@ -4566,28 +4612,7 @@
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:value-of select="b:Author/b:Author/b:Corporate"/>
-						<xsl:choose>
-							<xsl:when test="$cAuthors=0">
-								<xsl:choose>
-									<xsl:when test="$cTitle!=0 or $cEdition!=0 or $cVolume!=0 or $cCity!=0 or $cStateProvince!=0 or $cPublisher!=0 or $cYear!=0 or $cPages!=0">
-										<xsl:call-template name ="templ_prop_ListSeparator"/>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:call-template name ="templ_prop_Dot"/>
-									</xsl:otherwise>
-								</xsl:choose>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:choose>
-									<xsl:when test="$cTitle!=0 or $cEdition!=0 or $cVolume!=0 or $cEditor!=0 or $cCity!=0 or $cStateProvince!=0 or $cPublisher!=0 or $cYear!=0 or $cPages!=0">
-										<xsl:call-template name ="templ_prop_ListSeparator"/>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:call-template name ="templ_prop_Dot"/>
-									</xsl:otherwise>
-								</xsl:choose>
-							</xsl:otherwise>
-						</xsl:choose>
+						<xsl:call-template name ="templ_prop_Space"/>
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:when>
@@ -5016,7 +5041,7 @@
 				<xsl:choose>
 					<xsl:when test="$cCorporateAuthors!=0">
 						<xsl:value-of select="b:Author/b:Author/b:Corporate"/>
-						<xsl:call-template name ="templ_prop_ListSeparator"/>
+						<xsl:call-template name ="templ_prop_Space"/>
 					</xsl:when>
 				</xsl:choose>
 			</xsl:when>
@@ -5254,8 +5279,7 @@
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:when>
-
-			<xsl:when test="$cAuthors=1">
+			<xsl:otherwise>
 				<xsl:for-each select="b:Author/b:Author/b:NameList/b:Person">
 					<xsl:variable name ="cAuthorFirstName">
 						<xsl:value-of select ="count(b:First)"/>
@@ -5263,168 +5287,37 @@
 					<xsl:variable name ="cAuthorLastName">
 						<xsl:value-of select ="count(b:Last)"/>
 					</xsl:variable>
-					<xsl:variable name ="cAuthorMiddleName">
-						<xsl:value-of select ="count(b:Middle)"/>
-					</xsl:variable>
+
 					<xsl:choose>
-						<xsl:when test="$cAuthorFirstName=1">
-							<xsl:choose>
-								<xsl:when test="contains(b:First,$prop_APA_FromToDash)">
-									<xsl:call-template name="HandleSPaceHypenInAuthor">
-										<xsl:with-param name="author">
-											<xsl:call-template name="right-trim">
-												<xsl:with-param name ="s" select="b:First"/>
-											</xsl:call-template>
-										</xsl:with-param>
-									</xsl:call-template>
-									<xsl:call-template name ="templ_prop_Space"/>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:call-template name="splitAuthorSpace">
-										<xsl:with-param name ="first">
-											<xsl:call-template name="right-trim">
-												<xsl:with-param name ="s" select="b:First"/>
-											</xsl:call-template>
-										</xsl:with-param>
-									</xsl:call-template>
-									<xsl:call-template name ="templ_prop_Space"/>
-								</xsl:otherwise>
-							</xsl:choose>
+						<xsl:when test="$cAuthorLastName=1">
+							<xsl:value-of select="b:Last"/>
+							<xsl:call-template name ="templ_prop_ListSeparator"/>
 						</xsl:when>
 					</xsl:choose>
 
 					<xsl:choose>
-						<xsl:when test="$cAuthorMiddleName=1">
-							<xsl:choose>
-								<xsl:when test="contains(b:Middle,$prop_APA_FromToDash)">
-									<xsl:call-template name="HandleSPaceHypenInAuthor">
-										<xsl:with-param name="author">
-											<xsl:call-template name="right-trim">
-												<xsl:with-param name ="s" select="b:Middle"/>
-											</xsl:call-template>
-										</xsl:with-param>
+						<xsl:when test="$cAuthorFirstName=1">
+							<xsl:call-template name="splitAuthorSpace">
+								<xsl:with-param name ="first">
+									<xsl:call-template name="right-trim">
+										<xsl:with-param name ="s" select="b:First"/>
 									</xsl:call-template>
-									<xsl:call-template name ="templ_prop_Space"/>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:call-template name="splitAuthorSpace">
-										<xsl:with-param name ="first">
-											<xsl:call-template name="right-trim">
-												<xsl:with-param name ="s" select="b:Middle"/>
-											</xsl:call-template>
-										</xsl:with-param>
-									</xsl:call-template>
-									<xsl:call-template name ="templ_prop_Space"/>
-								</xsl:otherwise>
-							</xsl:choose>
-						</xsl:when>
-					</xsl:choose>
-					<xsl:choose>
-						<xsl:when test="$cAuthorLastName=1">
-							<xsl:value-of select="b:Last"/>
+								</xsl:with-param>
+							</xsl:call-template>
 							<xsl:choose>
-								<xsl:when test="$cTitle!=0 or $cJournalName!=0 or $cVolume!=0 or $cIssue!=0 or $cYear!=0 or $cPages!=0">
+								<xsl:when test="(position()&lt;$cAuthors)">
 									<xsl:call-template name ="templ_prop_ListSeparator"/>
+									<xsl:call-template name ="templ_prop_Space"/>
 								</xsl:when>
 								<xsl:otherwise>
-									<xsl:call-template name ="templ_prop_Dot"/>
+									<xsl:call-template name ="templ_prop_Space"/>
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:when>
 					</xsl:choose>
 				</xsl:for-each>
-			</xsl:when>
+			</xsl:otherwise>
 
-			<xsl:when test="$cAuthors>1">
-				<xsl:for-each select="b:Author/b:Author/b:NameList/b:Person">
-					<xsl:variable name ="cAuthorFirstName">
-						<xsl:value-of select ="count(b:First)"/>
-					</xsl:variable>
-					<xsl:variable name ="cAuthorLastName">
-						<xsl:value-of select ="count(b:Last)"/>
-					</xsl:variable>
-					<xsl:variable name ="cAuthorMiddleName">
-						<xsl:value-of select ="count(b:Middle)"/>
-					</xsl:variable>
-
-					<xsl:choose>
-						<xsl:when test ="(position())=$cAuthors">
-							<xsl:call-template name ="templ_prop_Space"/>
-							<xsl:call-template name ="templ_str_AndUnCap"/>
-							<xsl:call-template name ="templ_prop_Space"/>
-						</xsl:when>
-					</xsl:choose>
-
-					<xsl:choose>
-						<xsl:when test="$cAuthorFirstName=1">
-							<xsl:choose>
-								<xsl:when test="contains(b:First,$prop_APA_FromToDash)">
-									<xsl:call-template name="HandleSPaceHypenInAuthor">
-										<xsl:with-param name="author">
-											<xsl:call-template name="right-trim">
-												<xsl:with-param name ="s" select="b:First"/>
-											</xsl:call-template>
-										</xsl:with-param>
-									</xsl:call-template>
-									<xsl:call-template name ="templ_prop_Space"/>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:call-template name="splitAuthorSpace">
-										<xsl:with-param name ="first">
-											<xsl:call-template name="right-trim">
-												<xsl:with-param name ="s" select="b:First"/>
-											</xsl:call-template>
-										</xsl:with-param>
-									</xsl:call-template>
-									<xsl:call-template name ="templ_prop_Space"/>
-								</xsl:otherwise>
-							</xsl:choose>
-						</xsl:when>
-					</xsl:choose>
-					<xsl:choose>
-						<xsl:when test="$cAuthorMiddleName=1">
-							<xsl:choose>
-								<xsl:when test="contains(b:Middle,$prop_APA_FromToDash)">
-									<xsl:call-template name="HandleSPaceHypenInAuthor">
-										<xsl:with-param name="author">
-											<xsl:call-template name="right-trim">
-												<xsl:with-param name ="s" select="b:Middle"/>
-											</xsl:call-template>
-										</xsl:with-param>
-									</xsl:call-template>
-									<xsl:call-template name ="templ_prop_Space"/>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:call-template name="splitAuthorSpace">
-										<xsl:with-param name ="first">
-											<xsl:call-template name="right-trim">
-												<xsl:with-param name ="s" select="b:Middle"/>
-											</xsl:call-template>
-										</xsl:with-param>
-									</xsl:call-template>
-									<xsl:call-template name ="templ_prop_Space"/>
-								</xsl:otherwise>
-							</xsl:choose>
-						</xsl:when>
-					</xsl:choose>
-					<xsl:choose>
-						<xsl:when test="$cAuthorLastName=1">
-							<xsl:value-of select="b:Last"/>
-							<xsl:if test="((position()+1)!=$cAuthors) and (position()&lt;$cAuthors)">
-								<xsl:call-template name ="templ_prop_ListSeparator"/>
-							</xsl:if>
-						</xsl:when>
-					</xsl:choose>
-				</xsl:for-each>
-				<xsl:choose>
-					<xsl:when test="$cTitle!=0 or $cJournalName!=0 or $cVolume!=0 or $cIssue!=0 or $cYear!=0 or $cPages!=0">
-						<xsl:call-template name ="templ_prop_ListSeparator"/>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:call-template name ="templ_prop_Dot"/>
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
 
@@ -6198,6 +6091,87 @@
 		</xsl:if>
 	</xsl:template>
 
+	<xsl:template name="BibDisplayVolumeWithIssue">
+		<xsl:variable name="cVolume">
+			<xsl:value-of select="count(b:Volume)"/>
+		</xsl:variable>
+		<xsl:variable name="cIssue">
+			<xsl:value-of select="count(b:Issue)"/>
+		</xsl:variable>
+		<xsl:variable name="LCID">
+			<xsl:choose>
+				<xsl:when test="b:LCID='0' or b:LCID='' or not(b:LCID)">
+					<xsl:value-of select="/*/b:Locals/b:DefaultLCID"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="b:LCID"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:choose>
+			<xsl:when test ="$cVolume!=0">
+
+				<xsl:choose>
+					<xsl:when test="$cIssue!=0">
+						<xsl:choose>
+							<xsl:when test="$LCID = 1062">
+								<xsl:text>sēj. </xsl:text>
+							</xsl:when>
+							<xsl:when test="$LCID = 1049">
+								<xsl:text>Bыn. </xsl:text>
+							</xsl:when>
+							<xsl:when test="$LCID = 1031">
+								<xsl:text>Bd. </xsl:text>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:text>Vol. </xsl:text>
+							</xsl:otherwise>
+						</xsl:choose>
+						<xsl:value-of select="b:Volume"/>
+						<xsl:text> (</xsl:text>
+						<xsl:value-of select="b:Issue"/>
+						<xsl:text>)</xsl:text>
+						<xsl:call-template name ="templ_prop_ListSeparator"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:choose>
+							<xsl:when test="$LCID = 1062">
+								<xsl:text>sēj. </xsl:text>
+							</xsl:when>
+							<xsl:when test="$LCID = 1049">
+								<xsl:text>Bыn. </xsl:text>
+							</xsl:when>
+							<xsl:when test="$LCID = 1031">
+								<xsl:text>Bd. </xsl:text>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:text>Vol. </xsl:text>
+							</xsl:otherwise>
+						</xsl:choose>
+						<xsl:value-of select="b:Volume"/>
+						<xsl:call-template name ="templ_prop_ListSeparator"/>
+					</xsl:otherwise>
+				</xsl:choose>
+
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:choose>
+					<xsl:when test="$LCID = 1062">
+						<xsl:text>laid. </xsl:text>
+					</xsl:when>
+					<xsl:when test="$LCID = 1049">
+						<xsl:text>ч. </xsl:text>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:text>No. </xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:value-of select="b:Issue"/>
+				<xsl:call-template name ="templ_prop_ListSeparator"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+
 	<xsl:template name="BibDisplayVolumeJournal">
 		<xsl:variable name="cVolume">
 			<xsl:value-of select="count(b:Volume)"/>
@@ -6545,20 +6519,7 @@
 			<xsl:value-of select="count(b:Year)"/>
 		</xsl:variable>
 
-		<xsl:variable name="str_InNameCap">
-			<xsl:call-template name="templ_str_InUnCap"/>
-		</xsl:variable>
-		<xsl:variable name="prop_EnumSeaparator">
-			<xsl:call-template name ="templ_prop_Space"/>
-		</xsl:variable>
-
-
 		<xsl:if test ="$cBookTitle!=0">
-			<xsl:call-template name ="FindReplaceString">
-				<xsl:with-param name="originalString" select="string($str_InNameCap)"/>
-				<xsl:with-param name="stringToBeReplaced" select="' %1'"/>
-				<xsl:with-param name="stringReplacement" select="$prop_EnumSeaparator"/>
-			</xsl:call-template>
 			<xsl:call-template name ="templ_prop_Space"/>
 			<i>
 				<xsl:value-of select="b:BookTitle"/>
@@ -6656,6 +6617,9 @@
 		<xsl:variable name="cYear">
 			<xsl:value-of select="count(b:Year)"/>
 		</xsl:variable>
+		<xsl:variable name="cTitle">
+			<xsl:value-of select="count(b:Title)"/>
+		</xsl:variable>
 		<xsl:variable name="cPages">
 			<xsl:value-of select="count(b:Pages)"/>
 		</xsl:variable>
@@ -6663,10 +6627,18 @@
 		<xsl:choose>
 			<xsl:when test ="$cYear=1">
                 <xsl:text>(</xsl:text>
-				<xsl:value-of select = "b:Year"/>
+				<xsl:choose>
+					<xsl:when test="$cYear>0">
+						<xsl:value-of select = "b:Year"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:text>[n.d.]</xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>
+				
                 <xsl:text>)</xsl:text>
 				<xsl:choose>
-					<xsl:when test="$cPages>0">
+					<xsl:when test="$cPages>0 or $cTitle>0">
 						<xsl:call-template name ="templ_prop_ListSeparator"/>
 					</xsl:when>
 					<xsl:otherwise>
@@ -6765,6 +6737,9 @@
 		<xsl:variable name="cPages">
 			<xsl:value-of select="count(b:Pages)"/>
 		</xsl:variable>
+		<xsl:variable name="cDOI">
+			<xsl:value-of select="count(b:DOI)"/>
+		</xsl:variable>
 		<xsl:variable name ="pages">
 			<xsl:value-of select="b:Pages"/>
 		</xsl:variable>
@@ -6772,7 +6747,9 @@
 			<xsl:call-template name ="DisplayPageOrPages">
 				<xsl:with-param name="pages" select ="$pages"/>
 			</xsl:call-template>
-			<xsl:call-template name ="templ_prop_Dot"/>
+			<xsl:if test="$cDOI!=0">
+				<xsl:call-template name ="templ_prop_ListSeparator"/>
+			</xsl:if>
 		</xsl:if>
 	</xsl:template>
 
@@ -6968,71 +6945,100 @@
 			<xsl:variable name ="prop_Space">
 				<xsl:call-template name ="templ_prop_Space"/>
 			</xsl:variable>
+			<xsl:variable name="LCID">
+				<xsl:choose>
+					<xsl:when test="b:LCID='0' or b:LCID='' or not(b:LCID)">
+						<xsl:value-of select="/*/b:Locals/b:DefaultLCID"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="b:LCID"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
 			<xsl:choose>
-				<xsl:when test="$cDayAccessed!=0">
-					<xsl:choose>
-						<xsl:when test="$cMonthAccessed!=0">
-							<xsl:if test="$cYearAccessed!=0">
-								<xsl:call-template name ="templ_prop_Space"/>
-								<xsl:call-template name ="templ_prop_SecondaryOpen"/>
-								<xsl:call-template name ="FindReplaceString">
-									<xsl:with-param name="originalString" select="string($str_AccessedCap)"/>
-									<xsl:with-param name="stringToBeReplaced" select="' %1'"/>
-									<xsl:with-param name="stringReplacement" select="$prop_Space"/>
-								</xsl:call-template>
-								<xsl:value-of select="b:DayAccessed"/>
-								<xsl:call-template name ="templ_prop_Space"/>
-								<xsl:value-of select="b:MonthAccessed"/>
-								<xsl:call-template name ="templ_prop_Space"/>
-								<xsl:value-of select="b:YearAccessed"/>
-								<xsl:call-template name ="templ_prop_SecondaryClose"/>
-							</xsl:if>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:call-template name ="templ_prop_Space"/>
-							<xsl:call-template name ="templ_prop_SecondaryOpen"/>
-							<xsl:call-template name ="FindReplaceString">
-								<xsl:with-param name="originalString" select="string($str_AccessedCap)"/>
-								<xsl:with-param name="stringToBeReplaced" select="' %1'"/>
-								<xsl:with-param name="stringReplacement" select="$prop_Space"/>
-							</xsl:call-template>
-							<xsl:value-of select="b:YearAccessed"/>
-							<xsl:call-template name ="templ_prop_SecondaryClose"/>
-						</xsl:otherwise>
-					</xsl:choose>
+				<xsl:when test="$LCID = 1062">
+					<xsl:text>(</xsl:text>
+					<xsl:text>skatīts</xsl:text>
+					<xsl:call-template name = "templ_prop_Space"/>
+					<xsl:value-of select="b:YearAccessed"/>
+					<xsl:call-template name = "templ_prop_Dot"/>
+					<xsl:call-template name = "templ_prop_Space"/>
+					<xsl:text>gada</xsl:text>
+					<xsl:call-template name = "templ_prop_Space"/>
+					<xsl:value-of select="b:DayAccessed"/>
+					<xsl:call-template name = "templ_prop_Dot"/>
+					<xsl:call-template name = "templ_prop_Space"/>
+					<xsl:value-of select="b:MonthAccessed"/>
+					<xsl:text>)</xsl:text>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:choose>
-						<xsl:when test="$cMonthAccessed!=0">
-							<xsl:if test="$cYearAccessed!=0">
-								<xsl:call-template name ="templ_prop_Space"/>
-								<xsl:call-template name ="templ_prop_SecondaryOpen"/>
-								<xsl:call-template name ="FindReplaceString">
-									<xsl:with-param name="originalString" select="string($str_AccessedCap)"/>
-									<xsl:with-param name="stringToBeReplaced" select="' %1'"/>
-									<xsl:with-param name="stringReplacement" select="$prop_Space"/>
-								</xsl:call-template>
-								<xsl:value-of select="b:MonthAccessed"/>
-								<xsl:call-template name ="templ_prop_Space"/>
-								<xsl:value-of select="b:YearAccessed"/>
-								<xsl:call-template name ="templ_prop_SecondaryClose"/>
-							</xsl:if>
+						<xsl:when test="$cDayAccessed!=0">
+							<xsl:choose>
+								<xsl:when test="$cMonthAccessed!=0">
+									<xsl:if test="$cYearAccessed!=0">
+										<xsl:call-template name ="templ_prop_Space"/>
+										<xsl:text>(</xsl:text>
+										<xsl:call-template name ="FindReplaceString">
+											<xsl:with-param name="originalString" select="string($str_AccessedCap)"/>
+											<xsl:with-param name="stringToBeReplaced" select="' %1'"/>
+											<xsl:with-param name="stringReplacement" select="$prop_Space"/>
+										</xsl:call-template>
+										<xsl:value-of select="b:DayAccessed"/>
+										<xsl:call-template name ="templ_prop_Space"/>
+										<xsl:value-of select="b:MonthAccessed"/>
+										<xsl:call-template name ="templ_prop_Space"/>
+										<xsl:value-of select="b:YearAccessed"/>
+										<xsl:text>)</xsl:text>
+									</xsl:if>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:call-template name ="templ_prop_Space"/>
+									<xsl:text>(</xsl:text>
+									<xsl:call-template name ="FindReplaceString">
+										<xsl:with-param name="originalString" select="string($str_AccessedCap)"/>
+										<xsl:with-param name="stringToBeReplaced" select="' %1'"/>
+										<xsl:with-param name="stringReplacement" select="$prop_Space"/>
+									</xsl:call-template>
+									<xsl:value-of select="b:YearAccessed"/>
+									<xsl:text>)</xsl:text>
+								</xsl:otherwise>
+							</xsl:choose>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:call-template name ="templ_prop_Space"/>
-							<xsl:call-template name ="templ_prop_SecondaryOpen"/>
-							<xsl:call-template name ="FindReplaceString">
-								<xsl:with-param name="originalString" select="string($str_AccessedCap)"/>
-								<xsl:with-param name="stringToBeReplaced" select="' %1'"/>
-								<xsl:with-param name="stringReplacement" select="$prop_Space"/>
-							</xsl:call-template>
-							<xsl:value-of select="b:YearAccessed"/>
-							<xsl:call-template name ="templ_prop_SecondaryClose"/>
+							<xsl:choose>
+								<xsl:when test="$cMonthAccessed!=0">
+									<xsl:if test="$cYearAccessed!=0">
+										<xsl:call-template name ="templ_prop_Space"/>
+										<xsl:text>(</xsl:text>
+										<xsl:call-template name ="FindReplaceString">
+											<xsl:with-param name="originalString" select="string($str_AccessedCap)"/>
+											<xsl:with-param name="stringToBeReplaced" select="' %1'"/>
+											<xsl:with-param name="stringReplacement" select="$prop_Space"/>
+										</xsl:call-template>
+										<xsl:value-of select="b:MonthAccessed"/>
+										<xsl:call-template name ="templ_prop_Space"/>
+										<xsl:value-of select="b:YearAccessed"/>
+										<xsl:text>)</xsl:text>
+									</xsl:if>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:call-template name ="templ_prop_Space"/>
+									<xsl:text>(</xsl:text>
+									<xsl:call-template name ="FindReplaceString">
+										<xsl:with-param name="originalString" select="string($str_AccessedCap)"/>
+										<xsl:with-param name="stringToBeReplaced" select="' %1'"/>
+										<xsl:with-param name="stringReplacement" select="$prop_Space"/>
+									</xsl:call-template>
+									<xsl:value-of select="b:YearAccessed"/>
+									<xsl:text>)</xsl:text>
+								</xsl:otherwise>
+							</xsl:choose>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:otherwise>
 			</xsl:choose>
-			<xsl:call-template name ="templ_prop_Dot"/>
+			
 		</xsl:if>
 	</xsl:template>
 
@@ -7146,8 +7152,23 @@
 			<xsl:call-template name="right-trim">
 				<xsl:with-param name ="s" select="b:Title"/>
 			</xsl:call-template>
-			<xsl:call-template name ="List_Separator_NoSpace"/>
 			<xsl:call-template name="templ_prop_CloseQuote"/>
+			<xsl:call-template name ="templ_prop_Space"/>
+		</xsl:if>
+	</xsl:template>
+
+	
+	<xsl:template name="BibDisplayTitleDocumentFromWebsite">
+		<xsl:variable name="cTitle">
+			<xsl:value-of select="count(b:Title)"/>
+		</xsl:variable>
+		<xsl:if test ="$cTitle!=0">
+			<xsl:call-template name="templ_prop_OpenQuote"/>
+			<xsl:call-template name="right-trim">
+				<xsl:with-param name ="s" select="b:Title"/>
+			</xsl:call-template>
+			<xsl:call-template name="templ_prop_CloseQuote"/>
+			<xsl:text>:</xsl:text>
 			<xsl:call-template name ="templ_prop_Space"/>
 		</xsl:if>
 	</xsl:template>
@@ -7219,11 +7240,29 @@
 		<xsl:variable name="cURL">
 			<xsl:value-of select="count(b:URL)"/>
 		</xsl:variable>
+		<xsl:variable name="LCID">
+			<xsl:choose>
+				<xsl:when test="b:LCID='0' or b:LCID='' or not(b:LCID)">
+					<xsl:value-of select="/*/b:Locals/b:DefaultLCID"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="b:LCID"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		<xsl:if test ="$cURL!=0">
-			<xsl:text>Available:</xsl:text>
+			<xsl:choose>
+				<xsl:when test="$LCID = 1062">
+					<xsl:text>pieejams:</xsl:text>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>available:</xsl:text>
+				</xsl:otherwise>
+			</xsl:choose>
+			
 			<xsl:call-template name ="templ_prop_Space"/>
 			<xsl:value-of select="b:URL"/>
-			<xsl:call-template name ="templ_prop_Dot"/>
+			<xsl:call-template name ="templ_prop_Space"/>
 		</xsl:if>
 	</xsl:template>
 
@@ -7298,6 +7337,16 @@
 		</xsl:choose>
 	</xsl:template>
 
+	<xsl:template name="BibDisplayDOI">
+		<xsl:variable name="cDOI">
+			<xsl:value-of select="count(b:DOI)"/>
+		</xsl:variable>
+		<xsl:if test ="$cDOI!=0">
+			<xsl:text>doi:</xsl:text>
+			<xsl:value-of select="b:DOI"/>
+		</xsl:if>
+	</xsl:template>
+
 	<xsl:template match ="b:Source">
 		<xsl:variable name="LCID">
 			<xsl:choose>
@@ -7359,53 +7408,48 @@
 
 			<xsl:when test="$SourceType = 'BookSection'">
                 <xsl:element name="p">
-					<xsl:call-template name = "BibAddParagraphAttributes"/>
+					<xsl:call-template name="BibAddParagraphAttributes"/>
 					<xsl:call-template name="BibRefOrder"/>
-                    <xsl:call-template name = "BibDisplayAuthorBookSection">
-						<xsl:with-param name ="DisplayEditorIfAuthorUnavailale" select="'true'" />
+                    <xsl:call-template name="BibDisplayAuthorBook">
+						<xsl:with-param name="DisplayEditorIfAuthorUnavailale" select="'false'" />
 					</xsl:call-template>
-					<xsl:call-template name = "BibDisplayTitleBC"/>
-					<xsl:call-template name ="BibDisplayBookTitle"/>
-					<xsl:call-template name = "BibDisplayEdition"/>
-					<xsl:call-template name="BibDisplayVolumeBook"/>
+					<xsl:call-template name="BibDisplayYearBC"/>
+					<xsl:call-template name="BibDisplayTitleBC"/>
 					<xsl:call-template name="BibDisplayEditor"/>
-					<xsl:call-template name = "BibDisplayCityBookSection"/>
-					<xsl:call-template name = "BibDisplayStateProvinceBC"/>
-					<xsl:call-template name = "BibDisplayPublisherBC"/>
-					<xsl:call-template name = "BibDisplayYearBC"/>
-					<xsl:call-template name ="BibDisplayPages"/>
+					<xsl:call-template name="BibDisplayBookTitle"/>
+					<xsl:call-template name="BibDisplayPublisherBC"/>
+					<xsl:call-template name="BibDisplayCityBookSection"/>
+					<xsl:call-template name="BibDisplayPages"/>
 				</xsl:element>
 			</xsl:when>
 
 			<xsl:when test="$SourceType = 'DocumentFromInternetSite'">
 				<xsl:element name="p">
-					<xsl:call-template name = "BibAddParagraphAttributes"/>
+					<xsl:call-template name="BibAddParagraphAttributes"/>
 					<xsl:call-template name="BibRefOrder"/>
-                    <xsl:call-template name = "BibDisplayAuthorWebsite"/>
-					<xsl:call-template name ="BibDisplayTitleWebSite"/>
-					<xsl:call-template name ="BibDisplayProductionCompanywebsite"/>
-					<xsl:call-template name = "BibDisplayDayMonthYearWebSiteJournal"/>
-					<xsl:call-template name ="BibDisplayStrOnline"/>
-					<xsl:call-template name ="BibDisplayURL"/>
-					<xsl:call-template name ="BibDisplayAccessedDates"/>
+					<xsl:call-template name="BibDisplayTitleDocumentFromWebsite"/>
+                    <xsl:call-template name="BibDisplayAuthorWebsite"/>
+					<xsl:call-template name="BibDisplayYearBC"/>
+					<xsl:call-template name="BibDisplayURL"/>
+					<xsl:call-template name="BibDisplayAccessedDates"/>
 				</xsl:element>
 			</xsl:when>
 
 			<xsl:when test="$SourceType = 'JournalArticle'">
 				<xsl:element name="p">
-					<xsl:call-template name = "BibAddParagraphAttributes"/>
+					<xsl:call-template name="BibAddParagraphAttributes"/>
 					<xsl:call-template name="BibRefOrder"/>
-                    <xsl:call-template name = "BibDisplayAuthorJArtcicle">
-						<xsl:with-param name ="DisplayEditorIfAuthorUnavailale" select="'true'" />
+                    <xsl:call-template name="BibDisplayAuthorJArtcicle">
+						<xsl:with-param name="DisplayEditorIfAuthorUnavailale" select="'true'" />
 					</xsl:call-template>
-					<xsl:call-template name = "BibDisplayTitleJournal"/>
+					<xsl:call-template name="BibDisplayYearBC"/>
+					<xsl:call-template name="BibDisplayTitleJournal"/>
 					<i>
-						<xsl:call-template name ="BibDisplayJournalName"/>
+						<xsl:call-template name="BibDisplayJournalName"/>
 					</i>
-					<xsl:call-template name="BibDisplayVolumeJournal"/>
-					<xsl:call-template name ="BibDisplayIssueJournal"/>
-					<xsl:call-template name ="BibDisplayPagesJournal"/>
-					<xsl:call-template name = "BibDisplayDayMonthYearWebSiteJournal"/>
+					<xsl:call-template name="BibDisplayVolumeWithIssue"/>
+					<xsl:call-template name="BibDisplayPages"/>
+					<xsl:call-template name="BibDisplayDOI"/>
 				</xsl:element>
 			</xsl:when>
 
@@ -7430,13 +7474,16 @@
 
 			<xsl:when test="$SourceType = 'ConferenceProceedings'">
 				<xsl:element name="p">
-					<xsl:call-template name = "BibAddParagraphAttributes"/>
+					<xsl:call-template name="BibAddParagraphAttributes"/>
 					<xsl:call-template name="BibRefOrder"/>
-                    <xsl:call-template name = "BibDisplayAuthorConPr"/>
-					<xsl:call-template name ="BibDisplayTitleConferenceProceedings"/>
+                     <xsl:call-template name="BibDisplayAuthorJArtcicle">
+						<xsl:with-param name="DisplayEditorIfAuthorUnavailale" select="'true'" />
+					</xsl:call-template>
+					<xsl:call-template name="BibDisplayYearBC"/>
+					<xsl:call-template name="BibDisplayTitleConferenceProceedings"/>
 					<xsl:call-template name="BibDisplayConferenceName" />
-					<xsl:call-template name ="BibDisplayConfCityConfProc"/>
-					<xsl:call-template name ="BibDisplayYear"/>
+					<xsl:call-template name="BibDisplayConfCityConfProc"/>
+					<xsl:call-template name="BibDisplayPages"/>
 				</xsl:element>
 			</xsl:when>
 
@@ -7496,15 +7543,15 @@
 
 			<xsl:when test="$SourceType = 'InternetSite'">
 				<xsl:element name="p">
-					<xsl:call-template name = "BibAddParagraphAttributes"/>
+					<xsl:call-template name="BibAddParagraphAttributes"/>
 					<xsl:call-template name="BibRefOrder"/>
-                    <xsl:call-template name = "BibDisplayAuthorWebsite"/>
-					<xsl:call-template name ="BibDisplayTitleWebSite"/>
-					<xsl:call-template name ="BibDisplayProductionCompanywebsite"/>
-					<xsl:call-template name = "BibDisplayDayMonthYearWebSiteJournal"/>
-					<xsl:call-template name ="BibDisplayStrOnline"/>
-					<xsl:call-template name ="BibDisplayURL"/>
-					<xsl:call-template name ="BibDisplayAccessedDates"/>
+                    <xsl:call-template name="BibDisplayAuthorBook">
+						<xsl:with-param name="DisplayEditorIfAuthorUnavailale" select="'false'" />
+					</xsl:call-template>
+					<xsl:call-template name="BibDisplayYearBC"/>
+					<xsl:call-template name="BibDisplayTitleWebSite"/>
+					<xsl:call-template name="BibDisplayURL"/>
+					<xsl:call-template name="BibDisplayAccessedDates"/>
 				</xsl:element>
 			</xsl:when>
 
@@ -7615,11 +7662,16 @@
 					<xsl:attribute name="width">
 						<xsl:value-of select="'100%'"/>
 					</xsl:attribute>
-					<xsl:for-each select ="b:Bibliography">
-						<xsl:apply-templates select="b:Source">
-							<xsl:sort select="b:RefOrder" order="ascending" data-type="number"/>
+						<xsl:for-each select ="b:Bibliography">
+								<xsl:apply-templates select="b:Source">
+									<xsl:sort select="b:RefOrder" order="ascending" data-type="number"/>
+								</xsl:apply-templates>
+						</xsl:for-each>
+					<!-- <xsl:for-each select ="b:Bibliography">
+						<xsl:apply-templates select="b:Source[b:SourceType != 'DocumentFromInternetSite']">
+							<xsl:sort select="b:BookTitle" order="ascending" data-type="string"/>
 						</xsl:apply-templates>
-					</xsl:for-each>
+					</xsl:for-each> -->
 				</xsl:element>
 			</body>
 		</html>
@@ -7649,6 +7701,9 @@
 			<xsl:variable name="SourceType">
 				<xsl:value-of select="b:Source/b:SourceType"/>
 			</xsl:variable>
+			<xsl:variable name="cAuthors">
+				<xsl:value-of select ="count(b:Source/b:Author/b:Author/b:NameList/b:Person)"/>
+			</xsl:variable>
 			<xsl:choose>
 				<xsl:when test="$SourceType = 'Book' or 
                 $SourceType = 'BookSection' or
@@ -7670,49 +7725,63 @@
 					<html xmlns="http://www.w3.org/TR/REC-html40">
 						<body>
 
-							<xsl:variable name ="cPages">
-								<xsl:value-of select="count(b:Pages)" />
-							</xsl:variable>
+							<xsl:choose>
+								<xsl:when test="$cAuthors = 0">
+									<xsl:call-template name="templ_prop_OpenBracket"/>
+									<xsl:value-of select="b:Source/b:Author/b:Author/b:Corporate"/>
+									<xsl:call-template name ="templ_prop_ListSeparator"/>
+									<xsl:call-template name ="templ_prop_Space"/>
+									<xsl:value-of select="b:Source/b:Year" />
+									<xsl:call-template name="templ_prop_CloseBracket"/>
+								</xsl:when>
+								<xsl:when test="$cAuthors &lt; 2">
+									<xsl:call-template name="templ_prop_OpenBracket"/>
+									<xsl:for-each select="b:Source/b:Author/b:Author/b:NameList/b:Person">
+										<xsl:value-of select="b:Last"/>
+									</xsl:for-each>
+									<xsl:call-template name ="templ_prop_ListSeparator"/>
+									<xsl:call-template name ="templ_prop_Space"/>
+									<xsl:value-of select="b:Source/b:Year" />
+									<xsl:call-template name="templ_prop_CloseBracket"/>
+								</xsl:when>
+								<xsl:when test="$cAuthors = 2">
+									<xsl:call-template name="templ_prop_OpenBracket"/>
+									<xsl:for-each select="b:Source/b:Author/b:Author/b:NameList/b:Person">
+										<xsl:choose>
+											<xsl:when test="position() = 1">
+												<xsl:value-of select="b:Last"/>
+												<xsl:call-template name="templ_prop_Space"/>
+												<xsl:call-template name="templ_str_AndUnCap"/>
+												<xsl:call-template name="templ_prop_Space"/>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:value-of select="b:Last"/>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:for-each>
+									<xsl:call-template name ="templ_prop_ListSeparator"/>
+									<xsl:call-template name ="templ_prop_Space"/>
+									<xsl:value-of select="b:Source/b:Year" />
+									<xsl:call-template name="templ_prop_CloseBracket"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:call-template name="templ_prop_OpenBracket"/>
+									<xsl:for-each select="b:Source/b:Author/b:Author/b:NameList/b:Person">
+										<xsl:choose>
+											<xsl:when test="position() = 1">
+												<xsl:value-of select="b:Last"/>
+												<xsl:call-template name="templ_prop_Space"/>
+											</xsl:when>
+										</xsl:choose>
+									</xsl:for-each>
+									<xsl:call-template name="templ_str_AndOthersUnCap"/>
+									<xsl:call-template name ="templ_prop_ListSeparator"/>
+									<xsl:call-template name ="templ_prop_Space"/>
+									<xsl:value-of select="b:Source/b:Year" />
+									<xsl:call-template name="templ_prop_CloseBracket"/>
+								</xsl:otherwise>
+							</xsl:choose>
 
-							<xsl:variable name ="initValueOfPages">
-								<xsl:value-of select="b:Pages"/>
-							</xsl:variable>
-
-							<xsl:variable name ="pages">
-								<xsl:choose>
-									<xsl:when test="contains($initValueOfPages, '-')">
-										<xsl:value-of select="concat('pp. ',$initValueOfPages)"/>
-									</xsl:when>
-									<xsl:when test="contains($initValueOfPages, ',')">
-										<xsl:value-of select="concat('pp. ',$initValueOfPages)"/>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:value-of select="concat('p. ',$initValueOfPages)"/>
-									</xsl:otherwise>
-								</xsl:choose>
-							</xsl:variable>
-
-
-							<xsl:if test="b:FirstAuthor">
-								<xsl:call-template name ="templ_prop_SecondaryOpen"/>
-							</xsl:if>
-
-							<xsl:call-template  name="RefOrder"/>
-
-							<xsl:if test="count(b:Pages)>0">
-								<xsl:call-template name="displayPageOrPages" >
-									<xsl:with-param name="pages" select ="$pages"/>
-								</xsl:call-template>
-							</xsl:if>
-
-							<xsl:if test="b:LastAuthor">
-								<xsl:call-template name="templ_prop_SecondaryClose"/>
-							</xsl:if>
-
-							<xsl:if test="not(b:LastAuthor)">
-								<xsl:call-template name="templ_prop_ListSeparator"/>
-								<xsl:call-template name ="templ_prop_Space"/>
-							</xsl:if>
 						</body>
 					</html>
 				</xsl:when>
